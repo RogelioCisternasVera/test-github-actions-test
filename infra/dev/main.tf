@@ -13,7 +13,10 @@ locals {
 # Subnet Group from Module
 ################################################################################
 module "subnet_group" {
-  source      = "../modules/rds_modules/rds_db_subnet_group"
+
+  source = "git::https://github.com/RogelioCisternasVera/Terra-Modules.git//modules/rds_modules/rds_db_subnet_group"
+
+  # source      = "../modules/rds_modules/rds_db_subnet_group"
   name        = "${var.project}-${var.environment}-db-subnet-group"
   name_prefix = false
   subnet_ids  = var.private_subnet_ids
@@ -31,7 +34,7 @@ module "subnet_group" {
 
 
 module "ci_cd_poc_github_task_definition" {
-  source = "../modules/ecs_modules/ecs_task_definition"
+  source = "git::https://github.com/RogelioCisternasVera/Terra-Modules.git//modules/ecs_modules/ecs_task_definition"
 
   family          = local.ci_cd_poc_github
   container_name  = local.ci_cd_poc_github
@@ -42,14 +45,14 @@ module "ci_cd_poc_github_task_definition" {
 
   log_group_name = "/ecs/${var.project}-${var.environment}/ci_cd_poc_github"
 
-  create_task_role = true
+  create_task_role      = true
   create_execution_role = true
 
   tags = var.tags
 }
 
 module "ci_cd_poc_github_ecs_service" {
-  source = "../modules/ecs_modules/ecs_service"
+  source = "git::https://github.com/RogelioCisternasVera/Terra-Modules.git//modules/ecs_modules/ecs_service"
 
   //cluster
   cluster_id = module.ecs_cluster.cluster_id
@@ -88,7 +91,7 @@ module "ci_cd_poc_github_ecs_service" {
 }
 
 module "ecs_cluster" {
-  source = "../modules/ecs_modules/ecs_cluster"
+  source = "git::https://github.com/RogelioCisternasVera/Terra-Modules.git//modules/ecs_modules/ecs_cluster"
 
   cluster_name = "${var.project}-${var.environment}"
 
@@ -104,7 +107,7 @@ module "ecs_cluster" {
 ###SSM PARAMETERS
 
 module "ssm_parameter_ecs_cluster_name" {
-  source = "../modules/ssm_modules/ssm_parameter"
+  source = "git::https://github.com/RogelioCisternasVera/Terra-Modules.git//modules/ssm_modules/ssm_parameter"
 
   parameter_name  = "/${var.project}/${var.environment}/ecs/cluster_name"
   parameter_value = module.ecs_cluster.cluster_name
